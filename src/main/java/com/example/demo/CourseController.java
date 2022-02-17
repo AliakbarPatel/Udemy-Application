@@ -24,7 +24,7 @@ public class CourseController{
         return repository.findAll();
     }
 
-    //// http://localhost:8080/courses/1
+    // http://localhost:8080/courses/1
     @GetMapping("/courses/{id}")
     public Course getCourseDetails(@PathVariable long id) {
 
@@ -40,7 +40,6 @@ public class CourseController{
     //POST - Create a new resource (/courses)
     @PostMapping("/courses")
     public void createCourse(@RequestBody Course course) {
-
         repository.save(course);
     }
 
@@ -49,15 +48,26 @@ public class CourseController{
     //PUT - Update/Replace a resource (/courses/1)
     @PutMapping("/courses/{id}")
     public void updateCourse(@PathVariable long id, @RequestBody Course course) {
-        repository.save(course);
+        try {
+            if (getCourseDetails(id) == null)
+                throw new RuntimeException("Course not found with id " + id);
+        } finally {
+            repository.save(course);
+        }
+
     }
 
 
     //DELETE - Delete a resource (/courses/1)
     @DeleteMapping("/courses/{id}")
     public void deleteCourse(@PathVariable long id) {
-        repository.deleteById(id);
-    }
+        try {
+            if (getAllCourses().isEmpty())
+                throw new RuntimeException("Course not found with id " + id);
+        } finally {
+            repository.deleteById(id);
+        }
 
+    }
 
 }
