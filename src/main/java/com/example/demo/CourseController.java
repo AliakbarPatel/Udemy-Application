@@ -4,6 +4,7 @@ import java.util.Optional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,12 +63,12 @@ public class CourseController{
     @DeleteMapping("/courses/{id}")
     public void deleteCourse(@PathVariable long id) {
         try {
-            if (getAllCourses().isEmpty())
+            if (getCourseDetails(id) == null)
                 throw new RuntimeException("Course not found with id " + id);
-        } finally {
-            repository.deleteById(id);
         }
 
+        catch (EmptyResultDataAccessException e){}
+        repository.deleteById(id);
     }
 
 }
