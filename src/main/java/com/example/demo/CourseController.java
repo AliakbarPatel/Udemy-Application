@@ -4,7 +4,6 @@ import java.util.Optional;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import java.lang.String;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +21,7 @@ public class CourseController{
     @Autowired
     private CourseRepository repository;
 
+
     // http://localhost:8080/courses
     @GetMapping("/courses")
     public List<Course> getAllCourses() {
@@ -30,11 +30,16 @@ public class CourseController{
 
     // http://localhost:8080/courses/1
     @GetMapping("/courses/{id}")
-    public Course getCourseDetails(@PathVariable long id) {
+    public Course getCourseDetails(@PathVariable String id) {
+        Long ID = 0L;
+       try{
+           ID = Long.parseLong(id);
+        }
+        catch (Exception e){ throw new RuntimeException("Invalid input, added value is a String please enter a positive integer");}
 
-        Optional<Course> course = repository.findById(id);
+        Optional<Course> course = repository.findById(ID);
 
-       if(id<=0)
+       if(ID<=0)
             throw new RuntimeException("Invalid address, please enter positive integer");
         else if (course.isPresent())
             return course.get();
@@ -55,8 +60,14 @@ public class CourseController{
 
     //PUT - Update/Replace a resource (/courses/1)
     @PutMapping("/courses/{id}")
-    public void updateCourse(@PathVariable long id, @RequestBody Course course) {
-        if(id<=0)
+    public void updateCourse(@PathVariable String id, @RequestBody Course course) {
+        Long ID = 0L;
+        try{
+            ID = Long.parseLong(id);
+        }
+        catch (Exception e){ throw new RuntimeException("Invalid input, added value is a String please enter a positive integer");}
+        course.setId(ID);
+        if(ID<=0)
             throw new RuntimeException("Invalid address, please enter positive integer");
         try {
             if (getCourseDetails(id) == null)
@@ -70,16 +81,21 @@ public class CourseController{
 
     //DELETE - Delete a resource (/courses/1)
     @DeleteMapping("/courses/{id}")
-    public void deleteCourse(@PathVariable long id) {
-        if(id<=0)
+    public void deleteCourse(@PathVariable String id) {
+        Long ID = 0L;
+        try{
+            ID = Long.parseLong(id);
+        }
+        catch (Exception e){ throw new RuntimeException("Invalid input, added value is a String please enter a positive integer");}
+        if(ID<=0)
             throw new RuntimeException("Invalid address, please enter positive integer");
         try {
-            if (getCourseDetails(id) == null && id<0)
-                throw new RuntimeException("Course not found with id " + id);
+          if (getCourseDetails(id) == null)
+               throw new RuntimeException("Course not found with id " + id);
         }
 
         catch (EmptyResultDataAccessException e){}
-        repository.deleteById(id);
+        repository.deleteById(ID);
     }
 
 }

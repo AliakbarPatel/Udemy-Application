@@ -1,16 +1,15 @@
 package com.example.demo;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import javax.persistence.*;
 
 @Entity
 public class Course {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Column(name="course_name")
@@ -52,11 +51,14 @@ public class Course {
         return courseDescription;
     }
 
-
     @Override
     public String toString() {
         return "Course [id=" + id + ", name=" + name + ", author=" + author + ", publishedOn=" + publishedOn +", " +
                 "courseDescription=" + courseDescription +"]";
+    }
+
+
+    public void setId(long id) { this.id = id;
     }
 
 }
