@@ -69,12 +69,10 @@ public class CourseController{
         course.setId(ID);
         if(ID<=0)
             throw new RuntimeException("Invalid address, please enter positive integer");
-        try {
-            if (getCourseDetails(id) == null)
+        else if (getCourseDetails(id) == null)
                 throw new RuntimeException("Course not found with id " + id);
-        } finally {
-            repository.save(course);
-        }
+        else repository.save(course);
+
 
     }
 
